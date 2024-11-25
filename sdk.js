@@ -233,7 +233,7 @@ const log = function log(ns) {
                             token
                         );
 
-                        
+                        document.getElementById("token").innerHTML = token;
                         setCookie("fcmToken", token, 7);
 
                         //await subscribeToken(token);
