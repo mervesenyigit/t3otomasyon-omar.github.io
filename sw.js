@@ -12,17 +12,18 @@ firebase.initializeApp({
     measurementId: "G-GZ1LGYWB85",
 });
 
-// Retrieve an instance of Firebase Messaging
 const messaging = firebase.messaging();
 
+// Handle background messages (when the app is in the background or closed)
 messaging.onBackgroundMessage((payload) => {
-    console.log("[Service Worker] Background message received:", payload);
+    console.log('[Service Worker] Background message received:', payload);
 
-    const notificationTitle = payload.notification.title;
-    const notificationOptions = {
-        body: payload.notification.body,
-        icon: payload.notification.icon,
+    const { title, body, icon } = payload.notification;
+    const options = {
+        body,
+        icon,
     };
 
-    self.registration.showNotification(notificationTitle, notificationOptions);
+    // Show the notification
+    self.registration.showNotification(title, options);
 });
