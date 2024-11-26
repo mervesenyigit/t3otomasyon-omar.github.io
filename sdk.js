@@ -40,7 +40,7 @@ const log = function log(ns) {
     } else if (window.Notification.permission === "denied") {
         error("Push Init", "Notification is blocked");
     } else {
-        const SW_FILE = "./sw.js";
+        const SW_FILE = "sw.js";
         const SERVER_URL = "http://localhost:3000";
         let VAPID = "";
 
