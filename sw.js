@@ -1,105 +1,71 @@
-importScripts(
-    "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"
-);
-importScripts(
-    "https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js"
-);
+importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js");
 
-(function (self) {
-    let messaging;
+// Firebase configuration
+firebase.initializeApp({
+    apiKey: "AIzaSyBBFtxoPU6_Wa92wL-1YGFvGe5rqk_oxYo",
+    authDomain: "notification-3c0be.firebaseapp.com",
+    projectId: "notification-3c0be",
+    storageBucket: "notification-3c0be.firebasestorage.app",
+    messagingSenderId: "492100026014",
+    appId: "1:492100026014:web:88b0624ec055d10d17c58f",
+    measurementId: "G-GZ1LGYWB85",
+});
 
-    const log = function log(ns) {
-        const args = Array.prototype.slice.call(arguments, ns ? 1 : 0);
-        console.group(
-            `%c FCM %c [sw] %c [Info] %c [${ns}]`,
-            "background: #E72020; color: #fff",
-            "background: #007E80; color: #fff",
-            "background: #1E88E5; color: #fff",
-            "background: #BBE6CC; color: black"
-        );
-        console.log.apply(console, args);
-        console.groupEnd();
-    };
+const messaging = firebase.messaging();
 
-    const decodeConfig = () =>
-        JSON.parse(self.atob(new URL(location).searchParams.get("firebaseConfig")));
+// Handle background messages
+messaging.onBackgroundMessage((payload) => {
+    console.log("[Service Worker] Background message received:", payload);
 
-    self.addEventListener("install", () => {
-        self.skipWaiting();
+    const { title, body, icon, click_action } = payload.notification || {};
+    self.registration.showNotification(title || "Notification", {
+        body: body || "You have a new message.",
+        icon: icon || "/default-icon.png", // Replace with a fallback icon if needed
+        data: {
+            click_action: click_action || "/", // Provide a fallback URL if click_action is not set
+        },
+        actions: [
+            { action: "view", title: "View Message" },
+            { action: "dismiss", title: "Dismiss" },
+        ],
     });
+});
 
-    self.addEventListener("notificationclick", (event) => {
-        const { notification } = event;
-        const {
-            data: { actionUrl },
-        } = notification;
+// Handle notification click events
+self.addEventListener("notificationclick", (event) => {
+    console.log("[Service Worker] Notification click received:", event);
 
-        log("Notification onClick", "Start Click", notification);
+    // Extract the URL from the notification data
+    const url = event.notification.data?.click_action || "/";
 
-        event.notification.close();
+    event.notification.close(); // Close the notification
 
-        event.waitUntil(
-            clients
-                .matchAll({ type: "window", includeUncontrolled: true })
-                .then((clientsArr) => {
-                    // If a Window tab matching the targeted URL already exists, focus that;
-                    const hadWindowToFocus = clientsArr.some((windowClient) => {
-                        windowClient.url === actionUrl
-                            ? (windowClient.focus(), true)
-                            : false;
-                    });
+    // Focus or open the URL in a new tab/window
+    event.waitUntil(
+        clients
+            .matchAll({ type: "window", includeUncontrolled: true })
+            .then((windowClients) => {
+                const matchingClient = windowClients.find(
+                    (client) => client.url === url
+                );
+                if (matchingClient) {
+                    return matchingClient.focus();
+                } else {
+                    return clients.openWindow(url);
+                }
+            })
+    );
+});
 
-                    // Otherwise, open a new tab to the applicable URL and focus it.
-                    if (!hadWindowToFocus) {
-                        return clients.openWindow(actionUrl);
-                    }
-                })
-        );
+// Handle service worker installation
+self.addEventListener("install", (event) => {
+    console.log("[Service Worker] Installed");
+    self.skipWaiting(); // Activate the service worker immediately
+});
 
-        log("Notification onClick", "End Click", notification);
-    });
-
-    const firebaseConfig = decodeConfig();
-
-    firebase.initializeApp(firebaseConfig);
-    messaging = firebase.messaging();
-
-    self.addEventListener("push", function (event) {
-        messaging.onBackgroundMessage((payload) => {
-            log(
-                "Notification onBackgroundMessage",
-                "Creating Notification To Show",
-                payload
-            );
-
-            const {
-                data: { title, body, actionUrl, icon, image },
-            } = payload;
-
-            const notificationOptions = {
-                body,
-                icon,
-                image,
-                data: {
-                    actionUrl,
-                },
-            };
-
-            log(
-                "Notification onBackgroundMessage",
-                "Start showNotification",
-                payload
-            );
-
-            const promiseChain = new Promise((resolve) => {
-                self.registration
-                    .showNotification(title, notificationOptions)
-                    .then(() => resolve());
-            });
-
-            event.waitUntil(promiseChain);
-
-            log("Notification onBackgroundMessage", "End showNotification", payload);
-        });
-    });
-})(self);
+// Handle service worker activation
+self.addEventListener("activate", (event) => {
+    console.log("[Service Worker] Activated");
+    event.waitUntil(self.clients.claim()); // Take control of all clients immediately
+});
