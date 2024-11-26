@@ -1,20 +1,15 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <base href="https://t3otomasyon-omar.github.io/noty/">
-
-    
-
-
-   
+    <title>FCM Notification</title>
+    <base href="https://t3otomasyon-omar.github.io/noty/" />
 </head>
 <body>
-    <p id="token"></p>
-    <button onclick="requestPermission">Request</button>
-   <script type="module" src="./sdk.js" async></script>
-
+    <h1>Firebase Cloud Messaging</h1>
+    <p id="token">Token will appear here...</p>
+    <button onclick="requestPermission()">Request Permission</button>
+    <script type="module" src="./sdk.js" async></script>
 </body>
 </html>
