@@ -58,15 +58,31 @@ const messaging = firebase.messaging();
 // and you should use data messages for custom notifications.
 // For more info see: 
 // https://firebase.google.com/docs/cloud-messaging/concept-options
-messaging.onBackgroundMessage(function(payload) {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  // Customize notification here
-  const notificationTitle = 'Background Message Title';
-  const notificationOptions = {
-    body: 'Background Message body.',
-    icon: '/firebase-logo.png'
-  };
+// messaging.onBackgroundMessage(function(payload) {
+//   console.log('[firebase-messaging-sw.js] Received background message ', payload);
+//   // Customize notification here
+//   const notificationTitle = 'Background Message Title';
+//   const notificationOptions = {
+//     body: 'Background Message body.',
+//     icon: '/firebase-logo.png'
+//   };
 
-  self.registration.showNotification(notificationTitle,
-    notificationOptions);
+//   self.registration.showNotification(notificationTitle,
+//     notificationOptions);
+// });
+
+const messaging = firebase.messaging();
+
+// Handle background messages (when the app is in the background or closed)
+messaging.onBackgroundMessage((payload) => {
+    console.log('[Service Worker] Background message received:', payload);
+
+    const { title, body, icon } = payload.notification;
+    const options = {
+        body,
+        icon,
+    };
+
+    // Show the notification
+    self.registration.showNotification(title, options);
 });
