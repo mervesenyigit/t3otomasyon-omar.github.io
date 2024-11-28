@@ -1,10 +1,11 @@
-import { initializeApp } from "firebase/app"
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"
 import {
   deleteToken,
   getMessaging,
   getToken,
   onMessage
-} from "firebase/messaging"
+} from "https://www.gstatic.com/firebasejs/9.17.1/firebase-messaging.js"
 import { firebaseConfig, vapidKey } from "./config"
 
 initializeApp(firebaseConfig)
