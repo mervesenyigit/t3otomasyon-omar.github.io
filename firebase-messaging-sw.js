@@ -71,7 +71,6 @@ const messaging = firebase.messaging();
 //     notificationOptions);
 // });
 
-const messaging = firebase.messaging();
 
 // Handle background messages (when the app is in the background or closed)
 messaging.onBackgroundMessage((payload) => {
