@@ -3,22 +3,7 @@
   "//_comment1": "Some browsers will use this to enable push notifications.",
   "//_comment2": "It is the same for all projects, this is not your project's sender ID",
   "gcm_sender_id": "103953800507",
-    "short_name": "Noty",
-    "name": "FCM Push Notifications",
-    "icons": [
-        {
-            "src": "./icon.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "./icon.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ],
-    "start_url": "/noty/",
-    "background_color": "#ffffff",
+    
     "display": "standalone",
     "theme_color": "#000000"
 }
