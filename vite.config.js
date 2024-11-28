@@ -6,7 +6,7 @@ export default defineConfig({
     rollupOptions: {
       input: [
         'index.html',
-        'firebase-messaging-sw.js'
+        'noty/firebase-messaging-sw.js'
       ],
       output: {
         entryFileNames: '[name].js',
